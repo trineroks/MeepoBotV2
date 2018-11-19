@@ -70,8 +70,7 @@ namespace MeepoBotV2 {
                 int sublistCount = reader.readInt();
                 List<string> ls = new List<string>();
                 for (int j = 0; j < sublistCount; j++) {
-                    int strLen = reader.readInt();
-                    string str = reader.readUTF8String(strLen);
+                    string str = reader.readUTF8String();
                     ls.Add(str);
                 }
                 test.Add(ls);

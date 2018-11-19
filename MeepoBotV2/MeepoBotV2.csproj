@@ -57,7 +57,7 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="BinReader.cs" />
     <Compile Include="BinSerializer.cs" />
+    <Compile Include="BinSizeFinder.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="GiveawayModule.cs" />
     <Compile Include="MeepoBot.cs" />

@@ -21,30 +21,32 @@ namespace MeepoBotV2 {
             this.data = data;
         }
 
-        public void writeByte(byte value) {
+        public virtual void writeByte(byte value) {
             data[offset++] = value;
         }
 
-        public void writeUInt64(ulong value) { //8 bytes
+        public virtual void writeUInt64(ulong value) { //8 bytes
             writeUInt32((uint)(value >> 32));
             writeUInt32((uint)(value));
         }
 
-        public void writeInt(int value) { // 4 bytes, 32 bit int
+        public virtual void writeInt(int value) { // 4 bytes, 32 bit int
             writeByte((byte)(value >> 24));
             writeByte((byte)(value >> 16));
             writeByte((byte)(value >> 8));
             writeByte((byte)(value));
         }
 
-        public void writeUInt32(uint value) {
+        public virtual void writeUInt32(uint value) {
             writeByte((byte)(value >> 24));
             writeByte((byte)(value >> 16));
             writeByte((byte)(value >> 8));
             writeByte((byte)(value));
         }
 
-        public void writeUTF8String(string value) {
+        public virtual void writeUTF8String(string value) {
+            int len = Encoding.UTF8.GetByteCount(value);
+            writeInt(len);
             byte[] bytes = Encoding.UTF8.GetBytes(value);
             foreach (byte b in bytes) {
                 data[offset++] = b;

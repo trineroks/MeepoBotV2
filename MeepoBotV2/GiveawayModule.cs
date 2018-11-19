@@ -36,17 +36,13 @@ namespace MeepoBotV2 {
             }
 
             public void serialize(BinSerializer s) {
-                s.writeInt(Encoding.UTF8.GetByteCount(game));
                 s.writeUTF8String(game);
-                s.writeInt(Encoding.UTF8.GetByteCount(key));
                 s.writeUTF8String(key);
             }
 
             public void deserialize(BinReader r) {
-                int len = r.readInt();
-                game = r.readUTF8String(len);
-                len = r.readInt();
-                key = r.readUTF8String(len);
+                game = r.readUTF8String();
+                key = r.readUTF8String();
             }
         }
 
@@ -64,13 +60,13 @@ namespace MeepoBotV2 {
         public void updateTick(long delta) {
             time += delta;
             Dictionary<ulong, int> tempUserTime = new Dictionary<ulong, int>();
-            if (time >= Constants.SECOND) {
-                minute++;
+            if (time >= Constants.SECOND) {                
+                int deltaTime = (int)(time / Constants.SECOND);
+                minute += deltaTime;
                 if (minute >= 60) {
                     saveIntervallist();
                     minute = 0;
                 }
-                int deltaTime = (int)(time / Constants.SECOND);
                 foreach (ulong id in userTimeCD.Keys) {
                     if (userTimeCD[id] > 0) { 
                         int curr = userTimeCD[id];
@@ -411,7 +407,6 @@ namespace MeepoBotV2 {
             BinSerializer serializer = new BinSerializer(arrLen);
             serializer.writeInt(list1len);
             foreach (string name in claimMap.Keys) {
-                serializer.writeInt(Encoding.UTF8.GetByteCount(name));
                 serializer.writeUTF8String(name);
                 serializer.writeInt(claimMap[name].Count);
                 foreach (KeyGamePair p in claimMap[name]) {
@@ -439,10 +434,9 @@ namespace MeepoBotV2 {
 
             int claimantCount = reader.readInt();
             for (int i = 0; i < claimantCount; i++) {
-                int len = reader.readInt();
-                string name = reader.readUTF8String(len);
+                string name = reader.readUTF8String();
                 claimMap.Add(name, new List<KeyGamePair>());
-                len = reader.readInt();
+                int len = reader.readInt();
                 for (int j = 0; j < len; j++) {
                     KeyGamePair kgp = new KeyGamePair();
                     kgp.deserialize(reader);
@@ -471,8 +465,6 @@ namespace MeepoBotV2 {
             foreach (List<string> ls in games) {
                 serializer.writeInt(ls.Count);
                 foreach (string s in ls) {
-                    int slen = Encoding.UTF8.GetByteCount(s);
-                    serializer.writeInt(slen);
                     serializer.writeUTF8String(s);
                 }
             }
@@ -502,8 +494,7 @@ namespace MeepoBotV2 {
                 int sublistCount = reader.readInt();
                 List<string> ls = new List<string>();
                 for (int j = 0; j < sublistCount; j++) {
-                    int strLen = reader.readInt();
-                    string str = reader.readUTF8String(strLen);
+                    string str = reader.readUTF8String();
                     ls.Add(str);
                 }
                 games.Add(ls);

@@ -11,7 +11,7 @@ namespace MeepoBotV2 {
         public const string URL_OPENDOTA = "https://api.opendota.com/api/";
 
         public const string COMMAND_PREFIX = "!m";
-        public const string URL_GITHUB = "https://github.com/trineroks/MeepoBot";
+        public const string URL_GITHUB = "https://github.com/trineroks/MeepoBotV2";
         public const string CREATOR = "trineroks";
 
         public const bool TESTBUILD = false;

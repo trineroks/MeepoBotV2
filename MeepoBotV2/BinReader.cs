@@ -37,7 +37,8 @@ namespace MeepoBotV2 {
             return (((ulong)readInt() << 32) | ((ulong)readInt() & uint.MaxValue));
         }
 
-        public string readUTF8String(int len) {
+        public string readUTF8String() {
+            int len = readByte();
             byte[] bytes = new byte[len];
             for (int i = 0; i < len; i++) {
                 bytes[i] = data[offset++];
