@@ -4,7 +4,7 @@ using Discord;
 using Discord.WebSocket;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -12,7 +12,10 @@ namespace MeepoBotV2 {
     class OpenDotaModule {
         Dictionary<ulong, string> users = new Dictionary<ulong, string>();
 
-        string[] ranks = new string[] { "N/A", "Herald", "Guardian", "Crusader", "Archon", "Legend", "Ancient", "Divine" };
+        string[] ranks = new string[] { "N/A", "Herald", "Guardian", "Crusader", "Archon", "Legend", "Ancient", "Divine", "Immortal" };
+
+        private string path = Path.Combine(Constants.DATAPATH, "DotaData");
+        private string usersFile = "userlist.droks";
 
         private class WinLoss {
             public int win;
@@ -49,6 +52,11 @@ namespace MeepoBotV2 {
             public Profile profile { get; set; }
         }
 
+        public OpenDotaModule()
+        {
+            loadUserMap();
+        }
+
         public async Task handleInput(SocketMessage m) {
             string input = m.ToString();
             string[] toParse = input.Split(' ');
@@ -61,8 +69,9 @@ namespace MeepoBotV2 {
                     await m.Channel.SendMessageAsync("Incorrect usage. Use " + Constants.Dota.COMMAND_PAIR + " your SteamID.");
                 }
                 else {
-                    users.Add(m.Author.Id, toParse[1]);
+                    users[m.Author.Id] = toParse[1];
                     await m.Channel.SendMessageAsync(m.Author.Mention + " has been paired with SteamID " + toParse[1]);
+                    saveUserMap();
                 }
             }
             else if (command == Constants.Dota.COMMAND_GETPROFILE) {
@@ -86,6 +95,53 @@ namespace MeepoBotV2 {
                         "```" + "\n" +
                         "Full profile at: https://www.opendota.com/players/" + id);
                 }
+            }
+        }
+
+        private void saveUserMap()
+        {
+            BinSizeFinder finder = new BinSizeFinder();
+            writeUserMap(finder);
+            BinSerializer serializer = new BinSerializer(finder.size());
+            writeUserMap(serializer);
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            string filePath = Path.Combine(path, usersFile);
+            File.WriteAllBytes(filePath, serializer.data);
+        }
+
+        private void loadUserMap()
+        {
+            string filePath = Path.Combine(path, usersFile);
+            if (!File.Exists(filePath))
+            {
+                return;
+            }
+            
+            byte[] read = File.ReadAllBytes(filePath);
+            BinReader reader = new BinReader(read);
+            UInt32 count = reader.readUInt32();
+            while (count > 0)
+            {
+                ulong key = reader.readUInt64();
+                string uid = reader.readUTF8String();
+                users.Add(key, uid);
+                count--;
+            }
+        }
+
+        private void writeUserMap(BinSerializer s)
+        {
+            UInt32 len = (UInt32)users.Count;
+            s.writeUInt32(len);
+            foreach (ulong key in users.Keys)
+            {
+                s.writeUInt64(key);
+                s.writeUTF8String(users[key]);
             }
         }
 

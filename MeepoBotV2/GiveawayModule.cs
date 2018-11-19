@@ -18,6 +18,8 @@ namespace MeepoBotV2 {
         Dictionary<ulong, int> userTimeCD = new Dictionary<ulong, int>();
         Dictionary<string, List<KeyGamePair>> claimMap = new Dictionary<string, List<KeyGamePair>>();
 
+
+        private string path = Path.Combine(Constants.DATAPATH, "GiveawayData");
         long time = 0;
         int minute = 0;
 
@@ -49,7 +51,6 @@ namespace MeepoBotV2 {
         private const string gamesSaveFile = "keylist.groks";
         private const string claimantFile = "keylist.claim";
         private const string intervalFile = "intervals.int";
-        private string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MeepoBotGiveaway");
 
         public GiveawayModule() {
             loadKeylist();

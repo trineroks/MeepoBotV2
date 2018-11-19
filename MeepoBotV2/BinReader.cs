@@ -38,7 +38,7 @@ namespace MeepoBotV2 {
         }
 
         public string readUTF8String() {
-            int len = readByte();
+            int len = readInt();
             byte[] bytes = new byte[len];
             for (int i = 0; i < len; i++) {
                 bytes[i] = data[offset++];
